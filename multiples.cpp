@@ -1,6 +1,11 @@
 #include <iostream> //standard library for i/o
 #include <math.h>
 
+/*Here is the setup.
+You’re a backend developer and you need to write a code that outputs an integer, a multiple of 10, between 0 & 100 given a rational number as input, a number between 0 & 1.
+Purpose: That number is used to reference a css rule used to generate a graphic that represents a sliding rating bar (see image below).  An example of input would be 0.8333 and your code needs to output 80.
+*/
+
 using namespace std;
 
 void main()
