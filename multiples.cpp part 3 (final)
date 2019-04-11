@@ -1,0 +1,21 @@
+#include <iostream> //standard library for i/o
+#include <math.h>
+
+using namespace std;
+
+int main()
+{
+	double multiple;
+
+	double input;
+
+		cout << "Enter a rational whole number between 0 and 1: ";
+		cin >> input;
+		cout << endl;
+		
+		multiple = (round (input *10))*10; 
+		
+		cout << multiple;
+		
+	return 0;
+}
