@@ -1,0 +1,25 @@
+#include <iostream>
+#include <math.h>
+
+//Purpose is to condense the code//
+
+using namespace std;
+
+int main()
+{
+	double multiple;
+
+	double input;
+
+		cout << "Enter a rational whole number between 0 and 1: ";
+		cin >> input;
+		cout << endl;
+		
+		multiple = input * 10;
+		multiple =  round (multiple);
+		multiple = multiple * 10;
+		
+		cout << multiple;
+		
+	return 0;
+}
