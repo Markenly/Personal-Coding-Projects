@@ -1,0 +1,132 @@
+#include <iostream>
+
+#include <string>
+
+#include <fstream>
+
+using namespace std;
+
+struct purchase_order{
+
+string phone_number;
+
+string itemnumber;
+
+double numberofitems;
+
+double cost;
+
+int process_dataing_plant_number;
+
+double tax_rateorder;
+
+double purhase_order_tax;
+
+double net_cost_order;
+
+double total_cost_order;
+
+};
+
+
+
+void input_data(ifstream &, purchase_order &);
+
+void output_data(const purchase_order &);
+
+void process_data(purchase_order &);
+
+
+
+
+void input_data(ifstream &in, purchase_order &process_record)
+{
+in >> process_record.phone_number;
+
+in >> process_record.itemnumber >> process_record.numberofitems >> process_record.cost >>
+
+process_record.process_dataing_plant_number;
+}
+
+
+
+void output_data(const purchase_order &process_record) 
+{
+cout.setf(ios::showpoint);
+
+cout.precision(2);
+
+cout.setf(ios::fixed);
+
+cout << process_record.phone_number << "\t";
+
+cout << process_record.itemnumber << "\t" << process_record.numberofitems << "\t"
+
+<< process_record.cost << "\t" << process_record.process_dataing_plant_number << "\t"
+
+<< process_record.tax_rateorder << "\t" << process_record.purhase_order_tax << "\t"
+
+<< process_record.net_cost_order << "\t" << process_record.total_cost_order << endl;
+}
+
+void process_data(purchase_order &process_record)
+{
+if (0 <= process_record.process_dataing_plant_number && process_record.process_dataing_plant_number <= 50)
+
+process_record.tax_rateorder = 6;
+
+else if (51 <= process_record.process_dataing_plant_number && process_record.process_dataing_plant_number <= 110)
+
+process_record.tax_rateorder = 7;
+
+else if (111 <= process_record.process_dataing_plant_number && process_record.process_dataing_plant_number <= 200)
+
+process_record.tax_rateorder = 8;
+
+else if (201 <= process_record.process_dataing_plant_number && process_record.process_dataing_plant_number <= 500)
+
+process_record.tax_rateorder = 9;
+
+else if (process_record.process_dataing_plant_number > 500)
+
+process_record.tax_rateorder = 11;
+
+process_record.purhase_order_tax =
+
+process_record.numberofitems * process_record.cost * (process_record.tax_rateorder / 100.0);
+
+process_record.net_cost_order = process_record.numberofitems * process_record.cost;
+
+process_record.total_cost_order = process_record.net_cost_order + process_record.purhase_order_tax;
+}
+
+int main()
+{
+purchase_order cus_record;
+
+ifstream in;
+
+in.open("purchase_data.txt");
+
+if (in.fail()) {
+
+cout << "could not open correctly" << endl;
+} 
+
+else {
+
+while (!in.eof()) {
+
+input_data(in, cus_record);
+
+process_data(cus_record);
+
+output_data(cus_record);
+
+}}
+
+in.close();
+
+return 0;
+
+}
