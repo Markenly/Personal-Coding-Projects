@@ -130,3 +130,170 @@ in.close();
 return 0;
 
 }
+
+
+
+
+
+
+
+
+
+
+******************************************************************************************************************************
+
+
+#include <iostream>
+
+#include <string>
+
+#include <fstream> 
+
+using namespace std;
+
+
+void input(ifstream &, string &, string &, double &, double &, int &);
+
+void output(string, string, double, double, int, double, double, double,
+
+double);
+
+void process(double, double, int, double &, double &, double &, double &);
+
+
+
+void input(ifstream & in, string & cell_number, string & item_number,
+
+double & quantity, double & price, int & processing_plant)
+
+
+{
+
+in >> cell_number>>item_number>>quantity>>price>>processing_plant;
+
+
+}
+
+
+
+void output(string cell_number, string item_number, double quantity,
+
+double price, int processing_plant, double tax_rate, double order_tax,
+
+double net_cost, double total_cost)
+
+{
+
+
+
+cout.setf(ios::showpoint);
+
+cout.precision(2);
+
+cout.setf(ios::fixed);
+
+
+cout << cell_number << "\t"<<item_number<<"\t"<<quantity<<"\t"<<price;
+cout<<"\t"<<processing_plant<<"\t"<<(int)tax_rate<<"\t"<<order_tax<<"\t";
+cout<<net_cost<<"\t"<<total_cost<<endl;
+
+
+
+}
+
+
+
+void process(double quantity, double price, int processing_plant, double &
+
+tax_rate, double & order_tax, double & net_cost, double & total_cost)
+
+{
+
+
+if(processing_plant>=0 && processing_plant<=50)
+{
+   tax_rate=6;
+}
+else if(processing_plant>=51 && processing_plant<=110)
+{
+   tax_rate=7;
+}
+else if(processing_plant>=111 && processing_plant<=200)
+{
+   tax_rate=8;
+}
+else if(processing_plant>=210 && processing_plant<=500)
+{
+   tax_rate=9;
+}
+else if(processing_plant>500)
+{
+   tax_rate=11;
+}
+
+order_tax=quantity*price*(tax_rate/100);
+net_cost=quantity*price;
+total_cost=net_cost+order_tax;
+
+
+}
+
+
+
+int main()
+
+{
+
+string cell_number;
+
+string item_number;
+
+double quantity;
+
+double price;
+
+int processing_plant;
+
+double tax_rate;
+
+double order_tax;
+
+double net_cost;
+
+double total_cost;
+
+ifstream in;
+
+in.open("purchase_data.txt");
+
+if (in.fail())
+
+{
+
+cout << "Input file did not open correctly" << endl;
+
+}
+
+else
+
+{
+
+while (!in.eof())
+
+{
+
+input(in, cell_number, item_number, quantity,price, processing_plant);
+
+process(quantity,price,processing_plant,tax_rate,order_tax,net_cost,total_cost);
+
+output(cell_number,item_number,quantity,price, processing_plant,tax_rate,order_tax,net_cost,total_cost);
+
+}
+
+}
+
+in.close();
+
+return 0;
+
+}
