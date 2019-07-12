@@ -464,3 +464,537 @@ return 0;
 }
 
 /***************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************************************************************************/
+
+#include <iostream>
+
+#include <string>
+
+#include <fstream> 
+
+#include <iomanip>
+
+using namespace std;
+
+class order_record
+
+{
+
+public:
+
+   string cell_number;
+
+   string item_number;
+
+   int quantity; 
+
+   double price;
+
+   int processing_plant;
+
+   int tax_rate; 
+
+   double order_tax;
+
+   double net_cost;
+
+   double total_cost;
+
+};
+
+
+
+void initialize(order_record * & INV, int & count, int & size);
+
+bool is_Empty(int count);
+
+bool is_full(int count, int size);
+
+int search(order_record * INV, int count, string key);
+
+void add(order_record * & INV, int & count, int & size);
+
+void remove(order_record * INV, int & count, string key);
+
+void double_size(order_record * & INV, int count, int & size);
+
+void process(order_record * INV, int count);
+
+void print(const order_record * INV, const int count);
+
+void destroy_INV(order_record * INV, int & count, int & size);
+
+int main() 
+{
+
+       int count = 0; 
+
+          int size = 1;
+
+          order_record * INV = 0; 
+
+          cout << "**********************************************************************\n";
+
+          //Test 1:
+
+          //void initialize(order_record * & INV, int & count, int & size);
+
+          cout << "Test 1: Testing initialize, double_size, process, is_full and print " << endl;
+
+          initialize(INV, count, size);
+
+          process(INV, count);
+
+          print(INV, count);
+
+          cout << "End of Test 1" << endl;
+
+          cout << "**********************************************************************\n";
+
+          cout << "**********************************************************************\n";
+
+          //Test 2:
+
+          ////void add(order_record * & INV, int & count, int & size);
+
+          cout << "Test 2: Testing add, double_size, process, is_full, and print " << endl;
+
+          add(INV, count, size);
+
+          print(INV, count);
+
+          cout << "End of Test 2" << endl;
+
+          cout << "**********************************************************************\n";
+
+          cout << "**********************************************************************\n";
+
+          //Test 3:
+
+          ////void remove(order_record * INV, int & count, string key);
+
+          cout << "Test 3: Testing remove, is_Empty, search and print " << endl;
+
+          cout << "Removing 9546321555\n";
+
+          remove(INV, count, "9546321555");
+
+          print(INV, count);
+
+          cout << "Removing 787716590\n";
+
+          remove(INV, count, "7877176590");
+
+          print(INV, count);
+
+          cout << "Removing 3051234567\n";
+
+          remove(INV, count, "3051234567");
+
+          print(INV, count);
+
+          cout << "Removing 9546321555 ---AGAIN--- SHOULD GET MESSAGE\n";
+
+          remove(INV, count, "9546321555");
+
+          print(INV, count);
+
+          cout << "End of Test 3" << endl;
+
+          cout << "**********************************************************************\n";
+
+          cout << "**********************************************************************\n";
+
+          //Test 4:
+
+          ////void destroy_INV(order_record * INV, int & count, int & size);*/
+
+          cout << "Test 4: destroy_INV and print " << endl;
+
+          destroy_INV(INV, count, size);
+
+          cout << "size = " << size << endl;
+
+          cout << " count = " << count << endl;
+
+          cout << "End of Test 4" << endl;
+
+          cout << "**********************************************************************\n";
+
+          cout << "**********************************************************************\n";
+
+          return 0;
+
+}
+
+//Function Implementations will go here
+
+/*************************************************************************************************************************************************/
+
+//Name: initialize
+
+//Decription: Reads the data file of call information (cell number, item_number, quantity, price, and processing_plant) into the dynamic
+
+//array of call record, INV. If the count because equal to the size the function double_size is called and the memory allocated to INV is doubled.
+
+/***********************************************************************************************************************************************/
+
+void initialize(order_record * & INV, int & count, int & size)
+
+{
+
+   count = 0;
+
+   size = 1;
+
+   INV = new order_record[size];
+
+   ifstream in;
+
+   in.open("purchase_data.txt");
+
+   if(in.is_open())
+
+   {
+
+          while (!in.eof())
+
+          {
+
+                if (is_full(count, size))
+
+                {
+
+                       double_size(INV, count, size);
+
+                }
+
+                in >> INV[count].cell_number
+
+                       >> INV[count].item_number>>INV[count].quantity>>INV[count].price>>INV[count].processing_plant;
+
+                count++;
+
+          }
+
+   }else
+
+          cout<<"Unable to open the file purchase_data.txt";
+
+   in.close();
+
+}
+
+/**********************************************************************************************************************************/
+
+//Name: is_Empty
+
+//Decription: returns true if INV is empty
+
+/*********************************************************************************************************************************/
+
+bool is_Empty(int count)
+
+{
+
+   return count == 0;
+
+}
+
+/**********************************************************************************************************************************/
+
+//Name: Is_full
+
+
+//Decription: returns true if INV is full
+
+/*********************************************************************************************************************************/
+
+bool is_full(int count, int size)
+
+{
+
+   return count == size;
+
+}
+
+/**********************************************************************************************************************************/
+
+//Name: search
+
+
+//Decription: locates key in INV if it is there; otherwise -1 is returned
+
+/*********************************************************************************************************************************/
+
+int search(order_record * INV, int count, string key)
+
+{
+
+       for(int i=0;i<count;i++)
+
+       {
+
+             if(INV[i].cell_number == key)
+
+                    return i;
+
+       }
+
+   return -1;
+
+}
+
+/*********************************************************************************************************************************/
+
+//Name: add
+
+
+//Decription: adds a new record to INV; if INV is full, double_size is called to increase the capacity of INV.
+
+/********************************************************************************************************************************/
+
+void add(order_record * & INV, int & count, int & size)
+
+{
+
+       if(is_full(count,size))
+
+       {
+
+             double_size(INV, count, size);
+
+       }
+
+       cout<<"Enter cell number : ";
+
+       cin>>INV[count].cell_number;
+
+       cout<<"Enter item number : ";
+
+       cin>>INV[count].item_number;
+
+       cout<<"Enter quantiy : ";
+
+       cin>>INV[count].quantity;
+
+       cout<<"Enter price : ";
+
+       cin>>INV[count].price;
+
+       cout<<"Enter processing plant : ";
+
+       cin>>INV[count].processing_plant;
+
+       count++;
+
+       process(INV,count);
+
+}
+
+/********************************************************************************************************************************/
+
+//Name: Remove
+
+
+//Decription: remove all occurences of key from INV if it is there.
+
+/*******************************************************************************************************************************/
+
+void remove(order_record * INV, int & count, string key)
+
+{
+
+       int i = search(INV,count,key);
+
+       if(i == -1)
+
+             cout<<"No record with key : "<<key<<" exists"<<endl;
+
+       else{
+
+             while(i != -1)
+
+             {
+
+                    for(int j=i;j<count-1;j++)
+
+                    {
+
+                           INV[j] = INV[j+1];
+
+                    }
+
+                    count--;
+
+                    i = search(INV,count,key);
+
+             }
+
+       }
+
+}
+
+/******************************************************************************************************************************/
+
+//Name: double_size
+
+//Decription: doubles the size (capacity) of INV
+
+/******************************************************************************************************************************/
+
+void double_size(order_record * & INV, int count, int & size)
+
+{
+
+       size = 2*size;
+
+       order_record *temp_INV = new order_record[size];
+
+       for(int i=0;i<count;i++)
+
+       {
+
+             temp_INV[i] = INV[i];
+
+       }
+
+       delete [] INV;
+
+       INV = temp_INV;
+
+}
+
+/******************************************************************************************************************************/
+
+//Name: process
+
+
+//Decription: calculate the net cost, tax rate, order tax and total cost for every order record in INV.
+
+/*****************************************************************************************************************************/
+
+void process(order_record * INV, int count)
+
+{
+
+       for(int i=0;i<count;i++)
+
+       {
+
+             if(INV[i].processing_plant >=0 && INV[i].processing_plant <= 50)
+
+                    INV[i].tax_rate = 6;
+
+             else if(INV[i].processing_plant >=51 && INV[i].processing_plant <= 110)
+
+                    INV[i].tax_rate = 7;
+
+             else if(INV[i].processing_plant >= 111 && INV[i].processing_plant <= 200)
+
+                    INV[i].tax_rate = 8;
+
+             else if(INV[i].processing_plant >= 201 && INV[i].processing_plant <= 500)
+
+                    INV[i].tax_rate = 9;
+
+             else
+
+                    INV[i].tax_rate = 11;
+
+             INV[i].order_tax = (INV[i].quantity*INV[i].price*INV[i].tax_rate)/100;
+
+             INV[i].net_cost = INV[i].quantity * INV[i].price;
+
+             INV[i].total_cost = INV[i].net_cost + INV[i].order_tax;
+
+       }
+
+}
+
+/****************************************************************************************************************************/
+
+//Name: print
+
+
+//Decription: prints every field of every order_record in INV formatted to the screen.
+
+/***************************************************************************************************************************/
+
+void print(const order_record * INV, const int count)
+
+{
+
+   cout.setf(ios::fixed);
+
+   cout.setf(ios::showpoint);
+
+   cout.precision(2);
+
+   ofstream fout;
+
+   fout.open("purchase8_results.txt");
+
+   for(int i=0;i<count;i++)
+
+   {
+
+          cout<<left<<setw(15)<<INV[i].cell_number<<left<<setw(10)<<INV[i].item_number<<left<<setw(10)<<INV[i].quantity<<left<<setw(10)<<INV[i].price<<left<<setw(10)
+
+                       <<INV[i].processing_plant<<left<<setw(10)<<INV[i].tax_rate<<left<<setw(10)<<INV[i].order_tax<<left<<setw(10)<<INV[i].net_cost<<left<<setw(10)<<INV[i].total_cost<<endl;
+
+          fout<<left<<setw(15)<<INV[i].cell_number<<left<<setw(10)<<INV[i].item_number<<left<<setw(10)<<INV[i].quantity<<left<<setw(10)<<INV[i].price<<left<<setw(10)
+
+                              <<INV[i].processing_plant<<left<<setw(10)<<INV[i].tax_rate<<left<<setw(10)<<INV[i].order_tax<<left<<setw(10)<<INV[i].net_cost<<left<<setw(10)<<INV[i].total_cost<<endl;
+
+   }
+
+   fout.close();
+
+}
+
+/****************************************************************************************************************************/
+
+//Name: destroy_INV
+
+
+//Decription: de-allocates all memory allocated to INV. This should be the last function to be called before the program
+
+// is exited.
+
+/***************************************************************************************************************************/
+
+void destroy_INV(order_record * INV, int & count, int & size)
+
+{
+
+       delete INV;
+
+       count = 0;
+
+       size = 0;
+
+}
+
+
+
+
+
+
+
+
+
+/****************************************************************************************************************************/
